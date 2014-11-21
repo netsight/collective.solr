@@ -217,10 +217,10 @@ def extractQueryParameters(args):
     if limit:
         params['rows'] = int(limit)
     for key, value in args.items():
-        if key in ('fq', 'fl', 'facet', 'hl'):
+        if key in ('fq', 'fl', 'facet', 'hl', 'spellcheck'):
             params[key] = value
             del args[key]
-        elif key.startswith('facet.') or key.startswith('facet_'):
+        elif key.startswith(('facet.', 'facet_', 'spellcheck.')):
             name = lambda facet: facet.split(':', 1)[0]
             if isinstance(value, list):
                 value = map(name, value)
@@ -245,14 +245,14 @@ def cleanupQueryParameters(args, schema):
     sort = args.get('sort', None)
     if sort is not None:
         field, order = sort.split(' ', 1)
-        if not field in schema:
+        if field not in schema:
             field = sort_aliases.get(field, None)
         fld = schema.get(field, None)
         if fld is not None and fld.indexed:
             args['sort'] = '%s %s' % (field, order)
         else:
             del args['sort']
-    if 'facet.field' in args and not 'facet' in args:
+    if 'facet.field' in args and 'facet' not in args:
         args['facet'] = 'true'
     return args
 
