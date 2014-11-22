@@ -39,7 +39,7 @@ class Search(object):
         connection = manager.getConnection()
         if connection is None:
             raise SolrInactiveException
-        if not 'rows' in parameters:
+        if 'rows' not in parameters:
             parameters['rows'] = config.max_results or 10000000
             # Check if rows param is 0 for backwards compatibility. Before
             # Solr 4 'rows = 0' meant that there is no limitation. Solr 4
@@ -52,13 +52,13 @@ class Search(object):
                 'parameter: %r (%r)', config.max_results, query, parameters
             )
         if getattr(config, 'highlight_fields', None):
-            if parameters.get('hl', 'false') == 'true' and not 'hl.fl' in parameters:
+            if parameters.get('hl', 'false') == 'true' and 'hl.fl' not in parameters:
                 parameters['hl'] = 'true'
                 parameters['hl.fl'] = config.highlight_fields or []
                 parameters['hl.simple.pre'] = config.highlight_formatter_pre or ' '
                 parameters['hl.simple.post'] = config.highlight_formatter_post or ' '
                 parameters['hl.fragsize'] = getattr(config, 'highlight_fragsize', None) or 100
-        if not 'fl' in parameters:
+        if 'fl' not in parameters:
             if config.field_list:
                 parameters['fl'] = ' '.join(config.field_list)
             else:
