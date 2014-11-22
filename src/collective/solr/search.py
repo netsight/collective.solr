@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from logging import getLogger
 from time import time
-from zope.interface import implements
+
+from zope.interface import implementer
 from zope.component import queryUtility
 from Missing import MV
 
@@ -18,9 +19,9 @@ from collective.solr.utils import prepare_wildcard
 logger = getLogger('collective.solr.search')
 
 
+@implementer(ISearch)
 class Search(object):
-    """ a search utility for solr """
-    implements(ISearch)
+    """A search utility for SOLR."""
 
     def __init__(self):
         self.manager = None
