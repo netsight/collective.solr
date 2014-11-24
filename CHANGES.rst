@@ -1,10 +1,11 @@
 Changelog
 =========
 
-4.0.4 (unreleased)
-------------------
 
-- Nothing changed yet.
+4.0.4-netsight.dev0 (unreleased)
+--------------------------------
+
+- Add spellcheck support
 
 
 4.0.3 (2014-06-18)
