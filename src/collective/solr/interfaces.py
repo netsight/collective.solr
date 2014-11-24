@@ -388,3 +388,13 @@ class ICheckIndexable(Interface):
     def __call__():
         """ Return `True`, if context is indexable and `False`otherwise
         """
+
+
+class ISolrResponse(Interface):
+    """ Solr Response. """
+
+    def parse(data):
+        """ Parse SOLR response XML. """
+
+    def results():
+        """ return results from SOLR. """

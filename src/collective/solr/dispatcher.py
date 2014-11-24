@@ -95,10 +95,12 @@ def solrSearchResults(request=None, **keywords):
         response = search(query, **params)
     else:
         return SolrResponse()
+
     def wrap(flare):
         """ wrap a flare object with a helper class """
         adapter = queryMultiAdapter((flare, request), IFlare)
         return adapter is not None and adapter or flare
+
     results = response.results()
     for idx, flare in enumerate(results):
         flare = wrap(flare)
