@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '4.0.4-netsight.dev0'
+version = '4.0.4-netsight'
 long_description = \
     open("README.rst").read() + '\n' + open('CHANGES.rst').read()
 
