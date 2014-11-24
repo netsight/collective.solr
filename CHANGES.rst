@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+4.0.5-netsight (unreleased)
+---------------------------
+
+- Nothing changed yet.
+
+
 4.0.4-netsight (2014-11-24)
 ---------------------------
 
