@@ -1,6 +1,8 @@
 Introduction
 ============
 
+**This is the Netsight fork of collective.solr.**
+
 .. image:: https://secure.travis-ci.org/collective/collective.solr.png?branch=master
     :target: http://travis-ci.org/plone/collective/collective.solr
 

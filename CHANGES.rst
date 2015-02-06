@@ -1,12 +1,18 @@
 Changelog
 =========
 
-4.0.4 (unreleased)
+4.0.5 (2015-02-06)
 ------------------
 
-- Nothing changed yet.
+- Hack mangler.py to make relevance searches work.
+  [NETSIGHT]
 
 
+4.0.4-netsight (2014-11-?)
+--------------------------
+
+ - Hacks to make collective.solr work for Elsevier.
+   
 4.0.3 (2014-06-18)
 ------------------
 
