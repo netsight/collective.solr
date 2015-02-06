@@ -58,31 +58,46 @@ def makeSimpleExpressions(term, levenstein_distance):
     else:
         value = '%s* OR %s%s' % (prepare_wildcard(term), term,
                                  levenstein_expr)
-    return '(%s)' % value, '(%s)' % base_value
+    # Netsight: we removed the parenthesis around base_value
+    #           the first element of the returned tuple (value) is
+    #           not used.
+    return '(%s)' % value, base_value
 
 
-def mangleSearchableText(value, config):
+def mangleSearchableText(value, config, boost=5):
+    """Mangle the searchable text query.
+    The pattern configure by Netsight deployments will:
+
+       - Never use `value` directly in the format pattern in *field* values
+       - Never directly specifiy a boost value for *field* values
+        (instead it's applied here)
+
+    """
     pattern = getattr(config, 'search_pattern', '')
     levenstein_distance = getattr(config, 'levenshtein_distance', 0)
-    value_parts = []
     base_value_parts = []
+    boost_value_parts = []
 
     if not isSimpleSearch(value):
         return value
 
+    # Netsight: We don't use value (wildcarded form of `term_base_value`
+    #           As commented above, term_base_value is not enclosed in
+    #           parenthesises.
     for term in splitSimpleSearch(value):
-        (term_value,
-         term_base_value) = makeSimpleExpressions(term,
-                                                  levenstein_distance)
-        value_parts.append(term_value)
+        term_base_value = makeSimpleExpressions(term, levenstein_distance)[1]
         base_value_parts.append(term_base_value)
+        boost_value = '{}^{:d}'.format(term_base_value, boost)
+        boost_value_parts.append(boost_value)
 
     base_value = ' '.join(base_value_parts)
-    value = ' '.join(value_parts)
+    boost_value = ' '.join(boost_value_parts)
+    # We should always have a pattern
     if pattern:
-        value = pattern.format(value=quote(value),
+        value = pattern.format(boost_value=boost_value,
                                base_value=base_value)
-        return set([value])    # add literal query parameter
+        # add literal query parameter
+        return set([value])
     return value
 
 
@@ -217,10 +232,10 @@ def extractQueryParameters(args):
     if limit:
         params['rows'] = int(limit)
     for key, value in args.items():
-        if key in ('fq', 'fl', 'facet', 'hl'):
+        if key in ('fq', 'fl', 'facet', 'hl', 'spellcheck'):
             params[key] = value
             del args[key]
-        elif key.startswith('facet.') or key.startswith('facet_'):
+        elif key.startswith(('facet.', 'facet_', 'spellcheck.')):
             name = lambda facet: facet.split(':', 1)[0]
             if isinstance(value, list):
                 value = map(name, value)
@@ -245,14 +260,14 @@ def cleanupQueryParameters(args, schema):
     sort = args.get('sort', None)
     if sort is not None:
         field, order = sort.split(' ', 1)
-        if not field in schema:
+        if field not in schema:
             field = sort_aliases.get(field, None)
         fld = schema.get(field, None)
         if fld is not None and fld.indexed:
             args['sort'] = '%s %s' % (field, order)
         else:
             del args['sort']
-    if 'facet.field' in args and not 'facet' in args:
+    if 'facet.field' in args and 'facet' not in args:
         args['facet'] = 'true'
     return args
 
